@@ -26,7 +26,12 @@ void counting_sort( vector<int> &A, int size, int k )
     {
         B[C[A[i]]-1] = A[i];
         C[A[i]] = C[A[i]] - 1;
-    }        
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        A[i] = B[i];
+    }
 }
 
 int main()
