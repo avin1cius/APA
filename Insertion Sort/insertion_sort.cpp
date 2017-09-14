@@ -1,14 +1,16 @@
 #include <iostream>
+#include <fstream>
+#include <ctime>
 
 using namespace std;
 
-void insertion_sort( unsigned *ptr, unsigned num )
+void insertion_sort( int *ptr, int num )
 {
-    unsigned j, aux;
-    for( int i=0; i<num; i++ )
+    int j, aux;
+    for ( int i=0; i<num; i++ )
     {
         j = i;
-        while( j > 0 && ( ptr[j] < ptr[j-1] ))
+        while ( j > 0 && ( ptr[j] < ptr[j-1] ))
         {
             aux = ptr[j];
             ptr[j] = ptr[j-1];
@@ -18,9 +20,9 @@ void insertion_sort( unsigned *ptr, unsigned num )
     }
 }
 
-void display_array( unsigned *ptr, unsigned num )
+void display_array( int *ptr, int num )
 {
-    for( int i=0; i<num; i++ )
+    for ( int i = 0; i < num; i++ )
     {
         cout << ptr[i]<<" ";
     }
@@ -29,21 +31,55 @@ void display_array( unsigned *ptr, unsigned num )
 
 int main()
 {
-    unsigned n, option, *arr;
-    
-    cout << "Digite o tamanho do array: ";
-    cin >> n;
+    int n, *arr;    
+    string filename;
 
-    arr = new unsigned [n];
+    cout << "Digite o nome do arquivo: ";
+    cin >> filename;
 
-    cout << "Digite os elementos do array separados por espaço" << endl;
+    ifstream ifs( filename );
 
-    for( int i=0; i<n; i++ )
+    if ( ifs.is_open() )
     {
-        cin >> arr[i];
+        ifs >> n;
+        arr = new int [n];
+
+        for ( int i = 0; i < n; i++ )
+        {
+            ifs >> arr[i];
+        }
+
+        ifs.close();
+    }
+    else
+    {
+        cout << "Arquivo de entrada não encontrado" << endl;
+        return 0;
     }
     
+    const clock_t begin_time = clock();
+
     insertion_sort( arr, n );
 
-    display_array( arr, n );
+    double end_time = ( clock () - begin_time ) /  (double)CLOCKS_PER_SEC;
+    cout << "Tempo necessário para ordenação: " << end_time * 1000 << "ms" << endl;
+
+    ofstream ofs( "output.txt" );
+    
+    if ( !ofs.is_open() )
+    {
+        cout << "Erro ao criar o arquivo de saída" << endl;
+        return 0;
+    }
+    
+    for ( int i = 0; i < n; i++ )
+    {
+        ofs << arr[i] << endl;
+    }
+    
+    ofs.close();
+
+    cout << "Verificar resultado em output.txt" << endl;
+
+    return 0;
 }

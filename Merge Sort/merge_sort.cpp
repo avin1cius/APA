@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <ctime>
 
 using namespace std;
 
@@ -60,21 +62,56 @@ void display_array( int *arr, int l )
 
 int main()
 {
-    int length, *arr;
+    int n, *arr;
+
+    string filename;
     
-    cout << "Digite o tamanho do array: ";
-    cin >> length;
-
-    arr = new int [length];
-
-    cout << "Digite os elementos do array separados por espaço" << endl;
-
-    for( int i=0; i<length; i++ )
+    cout << "Digite o nome do arquivo: ";
+    cin >> filename;
+    
+    ifstream ifs( filename );
+    
+    if ( ifs.is_open() )
     {
-        cin >> arr[i];
+        ifs >> n;
+        arr = new int [n];
+    
+        for ( int i = 0; i < n; i++ )
+        {
+            ifs >> arr[i];
+        }
+    
+        ifs.close();
+    }
+    else
+    {
+        cout << "Arquivo de entrada não encontrado" << endl;
+        return 0;
+    }
+        
+    const clock_t begin_time = clock();
+    
+    merge_sort( arr, 0, n );
+
+    double end_time = ( clock () - begin_time ) /  (double)CLOCKS_PER_SEC;
+    cout << "Tempo necessário para ordenação: " << end_time * 1000 << "ms" << endl;
+
+    ofstream ofs( "output.txt" );
+    
+    if ( !ofs.is_open() )
+    {
+        cout << "Erro ao criar o arquivo de saída" << endl;
+        return 0;
     }
     
-    merge_sort( arr, 0, length );
+    for ( int i = 0; i < n; i++ )
+    {
+        ofs << arr[i] << endl;
+    }
+    
+    ofs.close();
 
-    display_array( arr, length );
+    cout << "Verificar resultado em output.txt" << endl;
+
+    return 0;
 }

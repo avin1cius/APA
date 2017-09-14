@@ -1,13 +1,8 @@
 #include <iostream>
+#include <fstream>
+#include <ctime>
 
 using namespace std;
-
-inline void swap( int *a, int *b )
-{            
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
 
 inline int partition( int *arr, int ini, int post )
 {
@@ -19,11 +14,11 @@ inline int partition( int *arr, int ini, int post )
         if( arr[j] <= pivot )
         {
             i++;
-            swap( &arr[i], &arr[j] );
+            swap( arr[i], arr[j] );
         }
     }
 
-    swap( &arr[i + 1], &arr[post] );
+    swap( arr[i + 1], arr[post] );
 
     return (i + 1);
 }
@@ -49,21 +44,56 @@ void display_array( int *arr, int num )
 
 int main()
 {
-    int length, *arr;
+    int n, *arr;
     
-    cout << "Digite o tamanho do array: ";
-    cin >> length;
-
-    arr = new int [length];
-
-    cout << "Digite os elementos do array separados por espaço" << endl;
-
-    for( int i=0; i<length; i++ )
+    string filename;
+    
+    cout << "Digite o nome do arquivo: ";
+    cin >> filename;
+    
+    ifstream ifs( filename );
+    
+    if ( ifs.is_open() )
     {
-        cin >> arr[i];
+        ifs >> n;
+        arr = new int [n];
+    
+        for ( int i = 0; i < n; i++ )
+        {
+            ifs >> arr[i];
+        }
+    
+        ifs.close();
+    }
+    else
+    {
+        cout << "Arquivo de entrada não encontrado" << endl;
+        return 0;
+    }
+        
+    const clock_t begin_time = clock();
+    
+    quick_sort( arr, 0, n-1 );
+
+    double end_time = ( clock () - begin_time ) /  (double)CLOCKS_PER_SEC;
+    cout << "Tempo necessário para ordenação: " << end_time * 1000 << "ms" << endl;
+
+    ofstream ofs( "output.txt" );
+    
+    if ( !ofs.is_open() )
+    {
+        cout << "Erro ao criar o arquivo de saída" << endl;
+        return 0;
     }
     
-    quick_sort( arr, 0, length-1 );
+    for ( int i = 0; i < n; i++ )
+    {
+        ofs << arr[i] << endl;
+    }
+    
+    ofs.close();
 
-    display_array( arr, length );
+    cout << "Verificar resultado em output.txt" << endl;
+
+    return 0;
 }
